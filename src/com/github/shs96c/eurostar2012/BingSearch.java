@@ -1,9 +1,33 @@
 package com.github.shs96c.eurostar2012;
 
-/**
- * Created with IntelliJ IDEA. User: sms Date: 23/10/2012 Time: 23:39 To change this template use
- * File | Settings | File Templates.
- */
-public class BingSearch {
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
+
+public class BingSearch implements SearchEngine {
+
+  private final WebDriver driver;
+  private final Wait<WebDriver> wait;
+
+  public BingSearch(WebDriver driver) {
+    this.driver = driver;
+    wait = new WebDriverWait(driver, 30);
+  }
+
+  public ResultsPage searchFor(String term) {
+    driver.get("http://www.bing.com/");
+    WebElement searchBox = driver.findElement(By.name("q"));
+    searchBox.sendKeys(term);
+    WebElement magnifyingGlass = driver.findElement(By.name("go"));
+    magnifyingGlass.click();
+
+    wait.until(visibilityOfElementLocated(By.id("results_area")));
+
+    return new BingResults(driver);
+  }
 }
